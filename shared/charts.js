@@ -62,17 +62,18 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
 
   // Build the line path
   let path = '';
+  let areaPath = '';
   if (cum.length === 0) {
     path = `M ${padL} ${padT + chartH} L ${padL + chartW} ${padT + chartH}`;
   } else if (cum.length === 1) {
-    path = `M ${xAt(0)} ${yAt(cum[0].cum)} L ${xAt(0)} ${yAt(cum[0].cum)}`;
+    // single point: draw a horizontal line at that level across the window
+    // so the chart reads as "we're holding steady at this value"
+    const y = yAt(cum[0].cum);
+    path = `M ${padL} ${y} L ${padL + chartW} ${y}`;
+    areaPath = `M ${padL} ${padT + chartH} L ${padL} ${y} ` +
+               `L ${padL + chartW} ${y} L ${padL + chartW} ${padT + chartH} Z`;
   } else {
     path = cum.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i)} ${yAt(p.cum)}`).join(' ');
-  }
-
-  // Fill below the line (area)
-  let areaPath = '';
-  if (cum.length >= 2) {
     areaPath = `M ${xAt(0)} ${padT + chartH} ` +
                cum.map((p, i) => `L ${xAt(i)} ${yAt(p.cum)}`).join(' ') +
                ` L ${xAt(cum.length - 1)} ${padT + chartH} Z`;
@@ -121,8 +122,9 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
     ${areaPath ? `<path d="${areaPath}" class="chart-area" />` : ''}
     <path d="${path}" class="chart-line" />
 
-    <!-- last point dot -->
-    ${cum.length ? `<circle cx="${xAt(cum.length - 1)}" cy="${yAt(cum[cum.length - 1].cum)}"
+    <!-- last point dot (anchor at right edge when single-point so it reads as "today") -->
+    ${cum.length ? `<circle cx="${cum.length === 1 ? padL + chartW : xAt(cum.length - 1)}"
+                             cy="${yAt(cum[cum.length - 1].cum)}"
                              r="5" class="chart-dot" />` : ''}
 
     <!-- thermometer (parallel right) -->
