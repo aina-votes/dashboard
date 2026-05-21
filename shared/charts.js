@@ -89,16 +89,19 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
   // Y-axis labels (3 ticks: 0, mid, top)
   const ticks = [0, Math.round(yMax / 2), yMax];
 
-  // X-axis labels (first, mid, last date)
+  // X-axis labels: 4-6 evenly spaced across the window (using actual data
+  // points). For very short series we just show every available point.
   const xLabels = [];
-  if (cum.length >= 1) {
-    xLabels.push({ i: 0, label: shortDate(cum[0].date) });
-    if (cum.length >= 3) {
-      const mid = Math.floor(cum.length / 2);
-      xLabels.push({ i: mid, label: shortDate(cum[mid].date) });
-    }
-    if (cum.length >= 2) {
-      xLabels.push({ i: cum.length - 1, label: shortDate(cum[cum.length - 1].date) });
+  if (cum.length === 1) {
+    xLabels.push({ i: 0, label: shortDate(cum[0].date), x: padL + chartW });
+  } else if (cum.length > 1) {
+    const targetTicks = Math.min(6, cum.length);
+    const seen = new Set();
+    for (let t = 0; t < targetTicks; t++) {
+      const idx = Math.round((cum.length - 1) * t / (targetTicks - 1));
+      if (seen.has(idx)) continue;
+      seen.add(idx);
+      xLabels.push({ i: idx, label: shortDate(cum[idx].date), x: xAt(idx) });
     }
   }
 
@@ -115,7 +118,7 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
 
     <!-- x-axis labels -->
     ${xLabels.map(x => `
-      <text x="${xAt(x.i)}" y="${H - 12}" class="chart-x-label" text-anchor="middle">${x.label}</text>
+      <text x="${x.x}" y="${H - 10}" class="chart-x-label" text-anchor="middle">${x.label}</text>
     `).join('')}
 
     <!-- area + line -->

@@ -103,12 +103,17 @@
   font-family: var(--mono);
 }
 .chart-grid { stroke: var(--surface-3); stroke-width: 1; stroke-dasharray: 2 4; }
-.chart-y-label,
-.chart-x-label {
+.chart-y-label {
   font-size: 10px;
   fill: var(--text-dim);
+  text-anchor: end;
 }
-.chart-y-label { text-anchor: end; }
+.chart-x-label {
+  font-size: 12px;
+  font-weight: 500;
+  fill: var(--text-secondary);
+  letter-spacing: 0.3px;
+}
 .chart-area    { fill: var(--channel-color); opacity: 0.15; }
 .chart-line {
   fill: none;
