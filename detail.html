@@ -41,6 +41,12 @@
     <button class="period-btn" data-period="week">Last 7 Days</button>
     <button class="period-btn" data-period="month">Last 30 Days</button>
     <button class="period-btn active" data-period="total">All Time</button>
+    <button class="period-btn" data-period="custom">Custom</button>
+  </div>
+  <div class="custom-range" id="custom-range" style="display:none">
+    <label>from <input type="date" id="custom-from"></label>
+    <label>to <input type="date" id="custom-to"></label>
+    <button class="custom-apply" id="custom-apply">Apply</button>
   </div>
 
   <div class="detail-split">
@@ -164,6 +170,17 @@ if (localStorage.getItem('cd_unlocked') === PASS_VERSION) {
 // even when localStorage pre-unlocks at script-load time.
 // fmt() comes from shared/charts.js
 
+// Custom range state (only used when STATE.period === 'custom')
+const CUSTOM = { from: null, to: null };
+
+function defaultCustomRange() {
+  // default = last 14 days ending today
+  const today = new Date();
+  const from  = new Date(today);
+  from.setDate(today.getDate() - 13);
+  return [from.toISOString().slice(0,10), today.toISOString().slice(0,10)];
+}
+
 function init() {
   // Resolve campaign key from URL
   const params = new URLSearchParams(location.search);
@@ -192,8 +209,28 @@ function init() {
       document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       STATE.period = btn.dataset.period;
+      const customWrap = document.getElementById('custom-range');
+      if (STATE.period === 'custom') {
+        if (!CUSTOM.from || !CUSTOM.to) {
+          [CUSTOM.from, CUSTOM.to] = defaultCustomRange();
+        }
+        document.getElementById('custom-from').value = CUSTOM.from;
+        document.getElementById('custom-to').value   = CUSTOM.to;
+        customWrap.style.display = '';
+      } else {
+        customWrap.style.display = 'none';
+      }
       render();
     });
+  });
+
+  document.getElementById('custom-apply').addEventListener('click', () => {
+    const f = document.getElementById('custom-from').value;
+    const t = document.getElementById('custom-to').value;
+    if (!f || !t || f > t) return;
+    CUSTOM.from = f;
+    CUSTOM.to   = t;
+    render();
   });
 
   loadData();
@@ -216,6 +253,15 @@ async function loadData() {
 }
 
 function pickSide(side, period) {
+  if (period === 'custom') {
+    // Sum the daily series within CUSTOM.from..CUSTOM.to (excludes baseline).
+    // Goal pro-rated from total cycle goal by # of days in the range.
+    const series = side.daily_series || [];
+    const count = series.reduce((sum, p) =>
+      (CUSTOM.from && CUSTOM.to && p.date >= CUSTOM.from && p.date <= CUSTOM.to)
+        ? sum + (p.count || 0) : sum, 0);
+    return { count, goal: null, pct: null, window: [CUSTOM.from, CUSTOM.to] };
+  }
   const suffix = period === 'total' ? 'total' :
                  period === 'week'  ? 'week'  : 'month';
   const goalSuffix = period === 'total' ? 'total' :
@@ -229,8 +275,9 @@ function pickSide(side, period) {
 }
 
 function windowFor(side, period) {
-  if (period === 'week')  return side.week_window;
-  if (period === 'month') return side.month_window;
+  if (period === 'week')   return side.week_window;
+  if (period === 'month')  return side.month_window;
+  if (period === 'custom') return (CUSTOM.from && CUSTOM.to) ? [CUSTOM.from, CUSTOM.to] : null;
   return null;
 }
 
@@ -240,11 +287,17 @@ function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
   const view = pickSide(side, period);
   const hasGoal = side.has_goal;
 
+  const isCustom = period === 'custom';
   countEl.textContent = fmt(view.count);
-  goalEl.textContent  = hasGoal ? fmt(view.goal) : 'goal pending';
-  pctEl.textContent   = hasGoal ? `${(view.pct || 0).toFixed(0)}%` : '';
-  pctEl.className = 'num-pct ' +
-    (hasGoal ? colorFor(view.pct) : 'pending');
+  if (isCustom) {
+    goalEl.textContent = 'in range';
+    pctEl.textContent  = '';
+    pctEl.className    = 'num-pct pending';
+  } else {
+    goalEl.textContent = hasGoal ? fmt(view.goal) : 'goal pending';
+    pctEl.textContent  = hasGoal ? `${(view.pct || 0).toFixed(0)}%` : '';
+    pctEl.className = 'num-pct ' + (hasGoal ? colorFor(view.pct) : 'pending');
+  }
 
   const win = windowFor(side, period);
   windowEl.textContent = win
@@ -265,13 +318,13 @@ function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
 
   chartEl.innerHTML = renderLineWithTherm({
     series: side.daily_series || [],
-    goal: view.goal,
-    hasGoal,
+    goal: isCustom ? null : view.goal,
+    hasGoal: !isCustom && hasGoal,
     period,
     today: todayHST,
     channel,
     windowRange,
-    baseline: side.baseline || 0,
+    baseline: isCustom ? 0 : (side.baseline || 0),
   });
 
   // Foot line: pace or warning, plus baseline asterisk for doors
