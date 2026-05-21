@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21T11:53:59.919390+00:00",
+  "generated_at": "2026-05-21T12:33:19.358764+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -20,15 +20,15 @@
         "baseline": 3934
       },
       "phones": {
-        "count_total": 186,
-        "count_week": 3,
-        "count_month": 11,
+        "count_total": 466,
+        "count_week": 466,
+        "count_month": 466,
         "goal_total": 8193,
         "goal_weekly": 1022,
         "goal_monthly": 4088,
-        "pct_total": 2.3,
-        "pct_week": 0.3,
-        "pct_month": 0.3,
+        "pct_total": 5.7,
+        "pct_week": 45.6,
+        "pct_month": 11.4,
         "has_goal": true
       }
     },
@@ -51,15 +51,15 @@
         "baseline": 2113
       },
       "phones": {
-        "count_total": 204,
-        "count_week": 20,
-        "count_month": 24,
+        "count_total": 428,
+        "count_week": 428,
+        "count_month": 428,
         "goal_total": 8193,
         "goal_weekly": 1022,
         "goal_monthly": 4088,
-        "pct_total": 2.5,
-        "pct_week": 2.0,
-        "pct_month": 0.6,
+        "pct_total": 5.2,
+        "pct_week": 41.9,
+        "pct_month": 10.5,
         "has_goal": true
       }
     },
@@ -82,9 +82,9 @@
         "baseline": 0
       },
       "phones": {
-        "count_total": 1,
+        "count_total": 0,
         "count_week": 0,
-        "count_month": 1,
+        "count_month": 0,
         "goal_total": 5810,
         "goal_weekly": 725,
         "goal_monthly": 2899,
@@ -113,9 +113,9 @@
         "baseline": 56
       },
       "phones": {
-        "count_total": 4,
+        "count_total": 3,
         "count_week": 0,
-        "count_month": 4,
+        "count_month": 3,
         "goal_total": 8489,
         "goal_weekly": 1059,
         "goal_monthly": 4236,

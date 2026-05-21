@@ -28,6 +28,9 @@ Source of truth for IDs:
 #   canvassed_list_id      - ST saved-list ID for "canvassed users" (Paele/Kalehua)
 #   canvassed_property_slug - ST custom-user-property slug to count when not blank
 #                             (Jordan/Christy use 'last-canvass-status')
+#   phase_start_date - ISO date the current phone/door phase officially started.
+#                     Used as `_since` cutoff on /calls so we don't pick up
+#                     pre-campaign call activity logged into the same chapter.
 #   goal_end_date   - ISO date for ballot drop / phase end (goal math anchors here)
 #
 # Exactly one of (canvassed_list_id, canvassed_property_slug) should be set per campaign.
@@ -39,10 +42,11 @@ CAMPAIGNS = [
         "primary_color": "#D4FF00",
         "voter_chapter": 1736,
         "org_id": 738,
-        "actions_chapters": [901],       # Jordan For Hawaii volunteers/actions chapter
+        "actions_chapters": [1736, 901], # voter chapter (where most calls land) + volunteers chapter
         "canvassed_list_id": 41845,      # "Jordan canvassed" saved list
         "canvassed_property_slug": None,
         "doors_baseline": 3934,          # list size at dashboard launch 2026-05-21
+        "phase_start_date": "2026-05-19",
         "goal_end_date": "2026-07-21",
     },
     {
@@ -52,10 +56,11 @@ CAMPAIGNS = [
         "primary_color": "#3DD9A1",
         "voter_chapter": 1423,
         "org_id": 542,
-        "actions_chapters": [877],       # Christy For Hawaii volunteers chapter
+        "actions_chapters": [1423, 877], # voter chapter (where most calls land) + volunteers chapter
         "canvassed_list_id": 41844,      # "Christy canvassed" saved list
         "canvassed_property_slug": None,
         "doors_baseline": 2113,          # pre-launch canvasses (Sam-confirmed); set to current list size at launch
+        "phase_start_date": "2026-05-19",
         "goal_end_date": "2026-07-21",
     },
     {
@@ -65,10 +70,11 @@ CAMPAIGNS = [
         "primary_color": "#1B3A2C",
         "voter_chapter": 1744,
         "org_id": 743,
-        "actions_chapters": [1743],      # Kalehua volunteers chapter
+        "actions_chapters": [1744, 1743], # voter chapter (where calls likely land) + volunteers chapter
         "canvassed_list_id": 41764,
         "canvassed_property_slug": None,
         "doors_baseline": 0,
+        "phase_start_date": "2026-05-19",
         "goal_end_date": "2026-07-21",
     },
     {
@@ -78,10 +84,11 @@ CAMPAIGNS = [
         "primary_color": "#B8542A",
         "voter_chapter": 1790,
         "org_id": 773,
-        "actions_chapters": [1514],      # Vote Paele campaign chapter
+        "actions_chapters": [1790, 1514], # voter chapter + campaign chapter
         "canvassed_list_id": 41208,
         "canvassed_property_slug": None,
         "doors_baseline": 56,
+        "phase_start_date": "2026-05-11",
         "goal_end_date": "2026-07-21",
     },
 ]

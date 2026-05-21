@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21T11:53:59.918100+00:00",
+  "generated_at": "2026-05-21T12:33:19.357262+00:00",
   "key": "paele",
   "name": "Vote Paele",
   "candidate": "Paele Kiakona",
@@ -34,9 +34,9 @@
     "has_goal": true
   },
   "phones": {
-    "count_total": 4,
+    "count_total": 3,
     "count_week": 0,
-    "count_month": 4,
+    "count_month": 3,
     "goal_total": 8489,
     "goal_weekly": 1059,
     "goal_monthly": 4236,
@@ -53,24 +53,8 @@
     ],
     "daily_series": [
       {
-        "date": "2026-05-09",
-        "count": 2
-      },
-      {
-        "date": "2026-05-10",
-        "count": 0
-      },
-      {
-        "date": "2026-05-11",
-        "count": 0
-      },
-      {
-        "date": "2026-05-12",
-        "count": 0
-      },
-      {
         "date": "2026-05-13",
-        "count": 0
+        "count": 1
       },
       {
         "date": "2026-05-14",

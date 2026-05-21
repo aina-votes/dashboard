@@ -131,15 +131,20 @@ def count_users_with_property_set(chapter_id: int, slug: str) -> int:
     return n
 
 
-def fetch_calls_for_chapter(chapter_id: int):
-    """Paginate /calls?chapter_id=X. Server-side filter is honored on this one."""
-    if not chapter_id:
+def fetch_calls_for_chapter(chapter_id: int, since_iso: str):
+    """Paginate /calls?chapter_id=X&_since=YYYY-MM-DD. `_since` is server-side
+    honored on /calls (verified 2026-05-21) and is critical for voter
+    chapters which can carry 6K+ historical calls from pre-campaign efforts."""
+    if not chapter_id or not since_iso:
         return []
     rows = []
     offset = 0
     limit = 100
     while True:
-        j = st_get("/calls", {"_limit": limit, "_offset": offset, "chapter_id": chapter_id})
+        j = st_get("/calls", {
+            "_limit": limit, "_offset": offset,
+            "chapter_id": chapter_id, "_since": since_iso,
+        })
         page = j.get("data", [])
         if not page:
             break
@@ -150,18 +155,17 @@ def fetch_calls_for_chapter(chapter_id: int):
         time.sleep(0.3)
         if offset > 50_000:
             break
-    # Client-side belt-and-suspenders filter to be safe.
     return [c for c in rows if c.get("chapter_id") == chapter_id and c.get("created_at")]
 
 
-def fetch_calls_for_chapters(chapter_ids):
+def fetch_calls_for_chapters(chapter_ids, since_iso: str):
     """Union of /calls across each chapter in chapter_ids (dedup by id)."""
     if not chapter_ids:
         return []
     seen = set()
     out = []
     for cid in chapter_ids:
-        for c in fetch_calls_for_chapter(cid):
+        for c in fetch_calls_for_chapter(cid, since_iso):
             cid_pk = c.get("id")
             if cid_pk and cid_pk in seen:
                 continue
@@ -381,7 +385,10 @@ def process_campaign(c: dict, goals: dict, today: date):
     }
 
     # ---- Phones side ----
-    calls = fetch_calls_for_chapters(c.get("actions_chapters") or [])
+    # `_since` bounded by the campaign's phone phase start; without it we
+    # pick up pre-campaign call history (other orgs/efforts in the same chapter).
+    phase_start = c.get("phase_start_date") or "2026-01-01"
+    calls = fetch_calls_for_chapters(c.get("actions_chapters") or [], phase_start)
     phones_count = len(calls)
     if calls:
         cdates = call_dates(calls)
