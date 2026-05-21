@@ -1,0 +1,48 @@
+/* Jordan for Hawaii — dark navy + lime + emerald + tangerine */
+@font-face {
+  font-family: 'Folsom Black';
+  src: url('../fonts/jordan/folsom-black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Katwijk Mono';
+  src: url('../fonts/jordan/katwijk-mono-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Katwijk Mono';
+  src: url('../fonts/jordan/katwijk-mono-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+[data-campaign="jordan"] {
+  --bg:          #0B0B38;
+  --surface:     #15154F;
+  --surface-2:   #1E1E63;
+  --surface-3:   #2A2A7A;
+  --border:      #2E2E80;
+  --text:        #FFFFFF;
+  --text-secondary: #C4C4E0;
+  --text-dim:    #8A8AB8;
+
+  --accent:      #D4FF00;
+  --door-color:  #4ADE80;
+  --phone-color: #FB923C;
+
+  --green:       #4ADE80;
+  --green-soft:  rgba(74, 222, 128, 0.16);
+  --orange:      #FB923C;
+  --orange-soft: rgba(251, 146, 60, 0.16);
+  --red:         #F87171;
+  --red-soft:    rgba(248, 113, 113, 0.16);
+
+  --font:        'Katwijk Mono', 'DM Sans', -apple-system, sans-serif;
+  --font-head:   'Folsom Black', 'Anton', 'Impact', sans-serif;
+  --mono:        'Katwijk Mono', 'JetBrains Mono', monospace;
+}

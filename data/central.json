@@ -1,0 +1,98 @@
+{
+  "generated_at": "2026-05-21T11:30:28.747886+00:00",
+  "campaigns": [
+    {
+      "key": "jordan",
+      "name": "Jordan for Hawaii",
+      "candidate": "Jordan Nakamura",
+      "primary_color": "#D4FF00",
+      "doors": {
+        "count_total": 3934,
+        "count_week": 0,
+        "count_month": 0,
+        "goal_total": 8934,
+        "goal_weekly": 624,
+        "goal_monthly": 2495,
+        "pct_total": 44.0,
+        "pct_week": 0.0,
+        "pct_month": 0.0,
+        "has_goal": true,
+        "baseline": 3934
+      },
+      "phones": {
+        "count_total": 186,
+        "count_week": 3,
+        "count_month": 11,
+        "goal_total": 8000,
+        "goal_weekly": 998,
+        "goal_monthly": 3992,
+        "pct_total": 2.3,
+        "pct_week": 0.3,
+        "pct_month": 0.3,
+        "has_goal": true
+      }
+    },
+    {
+      "key": "christy",
+      "name": "Christy for Hawaii",
+      "candidate": "Christy Macpherson",
+      "primary_color": "#3DD9A1",
+      "doors": {
+        "count_total": 2113,
+        "count_week": 0,
+        "count_month": 0,
+        "goal_total": 4113,
+        "goal_weekly": 250,
+        "goal_monthly": 998,
+        "pct_total": 51.4,
+        "pct_week": 0.0,
+        "pct_month": 0.0,
+        "has_goal": true,
+        "baseline": 2113
+      },
+      "phones": {
+        "count_total": 204,
+        "count_week": 20,
+        "count_month": 24,
+        "goal_total": 400,
+        "goal_weekly": 50,
+        "goal_monthly": 200,
+        "pct_total": 51.0,
+        "pct_week": 40.0,
+        "pct_month": 12.0,
+        "has_goal": true
+      }
+    },
+    {
+      "key": "kalehua",
+      "name": "Kalehua for Hawaii",
+      "candidate": "Kalehua Kaopua",
+      "primary_color": "#1B3A2C",
+      "doors": {
+        "count_total": 0,
+        "count_week": 0,
+        "count_month": 0,
+        "goal_total": 1500,
+        "goal_weekly": 187,
+        "goal_monthly": 748,
+        "pct_total": 0.0,
+        "pct_week": 0.0,
+        "pct_month": 0.0,
+        "has_goal": true,
+        "baseline": 0
+      },
+      "phones": {
+        "count_total": 1,
+        "count_week": 0,
+        "count_month": 1,
+        "goal_total": 180,
+        "goal_weekly": 22,
+        "goal_monthly": 90,
+        "pct_total": 0.6,
+        "pct_week": 0.0,
+        "pct_month": 1.1,
+        "has_goal": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "_comment": "Per-campaign cycle goals (to ballot drop 2026-07-21). Edit values as they're finalized. Monthly/weekly derive from total unless an override is set.",
+  "_schema": {
+    "doors_total": "Total door knocks targeted by 2026-07-21",
+    "doors_weekly_override": "Optional explicit weekly target; null = monthly/4 derived",
+    "doors_monthly_override": "Optional explicit monthly target; null = total / months_remaining derived",
+    "phones_total": "Total dials targeted by 2026-07-21",
+    "phones_weekly_override": "Optional explicit weekly target; null = monthly/4 derived",
+    "phones_monthly_override": "Optional explicit monthly target; null = total / months_remaining derived"
+  },
+  "jordan": {
+    "doors_total": 4044,
+    "doors_weekly_override": null,
+    "doors_monthly_override": null,
+    "phones_total": 8193,
+    "phones_weekly_override": null,
+    "phones_monthly_override": null
+  },
+  "christy": {
+    "doors_total": 3324,
+    "doors_weekly_override": null,
+    "doors_monthly_override": null,
+    "phones_total": 8193,
+    "phones_weekly_override": null,
+    "phones_monthly_override": null,
+    "_note": "Christy numbers tentative - confirm before final push"
+  },
+  "kalehua": {
+    "doors_total": 1595,
+    "doors_weekly_override": null,
+    "doors_monthly_override": null,
+    "phones_total": 5810,
+    "phones_weekly_override": null,
+    "phones_monthly_override": null
+  },
+  "paele": {
+    "doors_total": 3650,
+    "doors_weekly_override": null,
+    "doors_monthly_override": null,
+    "phones_total": 8489,
+    "phones_weekly_override": null,
+    "phones_monthly_override": null
+  }
+}

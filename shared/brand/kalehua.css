@@ -1,0 +1,25 @@
+/* Kalehua for Hawaii — pale blue-gray + deep forest green + warm rust */
+[data-campaign="kalehua"] {
+  --bg:          #E2ECEF;
+  --surface:     #F2F6F8;
+  --surface-2:   #D8E3E7;
+  --surface-3:   #C1D2D8;
+  --border:      #A6B8BF;
+  --text:        #1B3A2C;
+  --text-secondary: #2D4D3E;
+  --text-dim:    #5A6E64;
+
+  --accent:      #1B3A2C;
+  --door-color:  #1B3A2C;
+  --phone-color: #B85A3A;
+
+  --green:       #2D7A48;
+  --green-soft:  rgba(45, 122, 72, 0.14);
+  --orange:      #B85A3A;
+  --orange-soft: rgba(184, 90, 58, 0.14);
+  --red:         #9C2D1A;
+  --red-soft:    rgba(156, 45, 26, 0.14);
+
+  --font:        'Source Sans 3', 'DM Sans', -apple-system, sans-serif;
+  --font-head:   'Source Sans 3', 'Anton', 'Impact', sans-serif;
+}

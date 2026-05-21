@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ʻĀina Votes — Campaign Central</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌺</text></svg>">
+<link rel="stylesheet" href="shared/styles.css">
+</head>
+<body>
+
+<!-- ============ PASSWORD GATE ============ -->
+<div class="gate" id="gate">
+  <form class="gate-box" id="gate-form" onsubmit="return false">
+    <div class="gate-title">ʻĀina Votes</div>
+    <div class="gate-sub">campaign central</div>
+    <input type="password" class="gate-input" id="gate-input" autocomplete="off"
+           placeholder="passphrase" autofocus>
+    <button class="gate-btn" id="gate-btn" type="submit">Unlock</button>
+    <div class="gate-hint" id="gate-hint">internal volunteer-facing dashboard</div>
+  </form>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app" style="display:none">
+  <header class="app-header">
+    <div>
+      <div class="app-title">Campaign Central</div>
+      <div class="app-subtitle">where the work shows up</div>
+    </div>
+    <div class="app-meta">
+      <div class="updated" id="last-updated">loading…</div>
+      <div class="refresh">auto-refresh · 30 min</div>
+    </div>
+  </header>
+
+  <div class="period-bar" role="tablist">
+    <button class="period-btn" data-period="week">This Week</button>
+    <button class="period-btn" data-period="month">This Month</button>
+    <button class="period-btn active" data-period="total">Cycle Total</button>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <footer class="app-footer">
+    <div>Source · Solidarity Tech · refreshed every 30 min</div>
+    <div id="footer-meta"></div>
+  </footer>
+</div>
+
+<script>
+// =====================================================================
+// Password gate (localStorage; rotate by bumping PASS_VERSION + PASS_HASH)
+// =====================================================================
+const PASS_VERSION = 'v1';
+// SHA-256 of the actual password — set this once Sam provides it.
+// Placeholder until then: gates against literal "lahui" (sha256 below).
+const PASS_HASH = 'd3f1a165b88dccdcc8109dc7bfe67833e4d25e93ca5041049209bc234ba49d5f';
+
+async function sha256(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function tryUnlock(input) {
+  const h = await sha256(input);
+  if (h === PASS_HASH) {
+    localStorage.setItem('cd_unlocked', PASS_VERSION);
+    show();
+    return true;
+  }
+  return false;
+}
+
+function show() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = '';
+  loadData();
+}
+
+function bindGate() {
+  const input = document.getElementById('gate-input');
+  const btn   = document.getElementById('gate-btn');
+  const form  = document.getElementById('gate-form');
+  const hint  = document.getElementById('gate-hint');
+  if (!input || !btn || !form) {
+    if (hint) hint.textContent = 'gate DOM missing — refresh hard (Ctrl+Shift+R)';
+    return;
+  }
+
+  const attempt = () => {
+    const val = input.value;
+    hint.textContent = 'checking…';
+    tryUnlock(val).then(ok => {
+      if (ok) return; // showApp() already ran inside tryUnlock
+      hint.textContent = 'wrong passphrase';
+      input.classList.add('shake');
+      setTimeout(() => input.classList.remove('shake'), 500);
+      input.value = '';
+      input.focus();
+    }).catch(err => {
+      hint.textContent = 'error: ' + (err && err.message ? err.message : String(err));
+    });
+  };
+
+  btn.addEventListener('click', attempt);
+  form.addEventListener('submit', (e) => { e.preventDefault(); attempt(); });
+}
+
+// Already unlocked? Skip the gate.
+if (localStorage.getItem('cd_unlocked') === PASS_VERSION) {
+  show();
+} else {
+  bindGate();
+}
+
+// =====================================================================
+// Dashboard logic
+// =====================================================================
+const STATE = { period: 'total', data: null };
+const fmt = (n) => Number(n || 0).toLocaleString('en-US');
+
+function colorFor(pct, hasGoal) {
+  if (!hasGoal) return 'neutral';
+  if (pct >= 80) return 'green';
+  if (pct >= 40) return 'orange';
+  return 'red';
+}
+
+function pickSide(side, period) {
+  return {
+    count: side[`count_${period === 'total' ? 'total' : period}`],
+    goal:  side[`goal_${period === 'total' ? 'total' : period === 'week' ? 'weekly' : 'monthly'}`],
+    pct:   side[`pct_${period === 'total' ? 'total' : period}`],
+  };
+}
+
+function renderTile(c, period) {
+  const periodLabel =
+    period === 'week'  ? 'this week'  :
+    period === 'month' ? 'this month' : 'cycle total';
+
+  const doorsView  = pickSide(c.doors,  period);
+  const phonesView = pickSide(c.phones, period);
+
+  function row(label, view, hasGoal) {
+    const pct = Math.max(0, Math.min(100, view.pct || 0));
+    const fillClass = colorFor(view.pct, hasGoal);
+    const pendingCls = hasGoal ? '' : 'pending';
+    return `
+      <div class="tile-row ${pendingCls}">
+        <div class="tile-row-head">
+          <span class="tile-row-label">${label} · ${periodLabel}</span>
+          ${hasGoal
+            ? `<span class="tile-row-numbers">
+                 <span class="count">${fmt(view.count)}</span>
+                 <span class="slash">/</span>
+                 <span>${fmt(view.goal)}</span>
+                 <span class="pct">${(view.pct || 0).toFixed(0)}%</span>
+               </span>`
+            : `<span class="tile-row-numbers">
+                 <span class="count">${fmt(view.count)}</span>
+                 <span class="pending-flag">goal pending</span>
+               </span>`}
+        </div>
+        <div class="bar"><div class="bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }
+
+  return `
+    <a class="tile" data-campaign="${c.key}" href="detail.html?campaign=${c.key}"
+       style="--tile-color:${c.primary_color}">
+      <div class="tile-header">
+        <div>
+          <div class="tile-title">${c.name}</div>
+          <div class="tile-candidate">${c.candidate || ''}</div>
+        </div>
+        <div class="tile-arrow">→</div>
+      </div>
+      <div class="tile-stack">
+        ${row('Doors',  doorsView,  c.doors.has_goal)}
+        ${row('Phones', phonesView, c.phones.has_goal)}
+      </div>
+    </a>
+  `;
+}
+
+function render() {
+  if (!STATE.data) return;
+  const wrap = document.getElementById('tiles');
+
+  // central.json has tile data but not candidate names — we keep candidate
+  // in tile so the homepage looks complete; the fetch script can be extended
+  // to include it. For now, look up from inline map.
+  wrap.innerHTML = STATE.data.campaigns.map(c => renderTile(c, STATE.period)).join('');
+
+  const ts = new Date(STATE.data.generated_at);
+  const ago = Math.floor((Date.now() - ts.getTime()) / 60000);
+  document.getElementById('last-updated').textContent =
+    ago < 1 ? 'updated just now' : `updated ${ago} min ago`;
+  document.getElementById('footer-meta').textContent =
+    `${STATE.data.campaigns.length} campaigns · ${ts.toISOString().replace('T',' ').slice(0,16)} UTC`;
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(`data/central.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    STATE.data = await r.json();
+    render();
+  } catch (e) {
+    document.getElementById('tiles').innerHTML =
+      `<div class="error-state">Failed to load data/central.json — ${e.message}</div>`;
+  }
+}
+
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    STATE.period = btn.dataset.period;
+    render();
+  });
+});
+
+setInterval(loadData, 30 * 60 * 1000);
+setInterval(() => { if (STATE.data) render(); }, 60 * 1000);
+</script>
+</body>
+</html>

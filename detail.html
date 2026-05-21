@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaign Detail · ʻĀina Votes</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌺</text></svg>">
+<link rel="stylesheet" href="shared/styles.css">
+<link rel="stylesheet" href="shared/detail.css">
+<!-- Per-campaign brand module is loaded dynamically below based on ?campaign= -->
+</head>
+<body>
+
+<!-- ============ PASSWORD GATE (same gate as index) ============ -->
+<div class="gate" id="gate">
+  <form class="gate-box" id="gate-form" onsubmit="return false">
+    <div class="gate-title">ʻĀina Votes</div>
+    <div class="gate-sub">campaign central</div>
+    <input type="password" class="gate-input" id="gate-input" autocomplete="off"
+           placeholder="passphrase" autofocus>
+    <button class="gate-btn" id="gate-btn" type="submit">Unlock</button>
+    <div class="gate-hint" id="gate-hint">internal volunteer-facing dashboard</div>
+  </form>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app" style="display:none">
+  <header class="app-header detail-header">
+    <div>
+      <a class="back-link" href="index.html">← Central</a>
+      <div class="app-title" id="campaign-title">…</div>
+      <div class="app-subtitle" id="campaign-candidate"></div>
+    </div>
+    <div class="app-meta">
+      <div class="updated" id="last-updated">loading…</div>
+      <div class="refresh">auto-refresh · 30 min</div>
+    </div>
+  </header>
+
+  <div class="period-bar" role="tablist">
+    <button class="period-btn" data-period="week">Last 7 Days</button>
+    <button class="period-btn" data-period="month">Last 30 Days</button>
+    <button class="period-btn active" data-period="total">All Time</button>
+  </div>
+
+  <div class="detail-split">
+    <!-- DOORS SIDE -->
+    <section class="side" data-channel="door">
+      <div class="side-head">
+        <span class="side-pill">Doors</span>
+        <span class="side-window" id="doors-window"></span>
+      </div>
+      <div class="side-numbers">
+        <div class="num-stack">
+          <div class="num-count" id="doors-count">0</div>
+          <div class="num-line">
+            <span class="num-of">of</span>
+            <span class="num-goal" id="doors-goal">—</span>
+            <span class="num-pct" id="doors-pct">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="chart-wrap" id="doors-chart"></div>
+      <div class="side-foot" id="doors-foot"></div>
+    </section>
+
+    <!-- PHONES SIDE -->
+    <section class="side" data-channel="phone">
+      <div class="side-head">
+        <span class="side-pill">Phones</span>
+        <span class="side-window" id="phones-window"></span>
+      </div>
+      <div class="side-numbers">
+        <div class="num-stack">
+          <div class="num-count" id="phones-count">0</div>
+          <div class="num-line">
+            <span class="num-of">of</span>
+            <span class="num-goal" id="phones-goal">—</span>
+            <span class="num-pct" id="phones-pct">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="chart-wrap" id="phones-chart"></div>
+      <div class="side-foot" id="phones-foot"></div>
+    </section>
+  </div>
+
+  <div class="warnings" id="warnings"></div>
+
+  <footer class="app-footer">
+    <div>Source · Solidarity Tech · refreshed every 30 min</div>
+    <div id="footer-meta"></div>
+  </footer>
+</div>
+
+<script src="shared/charts.js"></script>
+<script>
+// State declared first so showApp()->init() can reference it even when
+// the gate is already unlocked at script-load time.
+const STATE = { period: 'total', data: null, campaignKey: null };
+
+// ===== Password gate (shared logic with index.html) =====
+const PASS_VERSION = 'v1';
+const PASS_HASH = 'd3f1a165b88dccdcc8109dc7bfe67833e4d25e93ca5041049209bc234ba49d5f';
+
+async function sha256(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function tryUnlock(input) {
+  const h = await sha256(input);
+  if (h === PASS_HASH) {
+    localStorage.setItem('cd_unlocked', PASS_VERSION);
+    showApp();
+    return true;
+  }
+  return false;
+}
+
+function showApp() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = '';
+  init();
+}
+
+function bindGate() {
+  const input = document.getElementById('gate-input');
+  const btn   = document.getElementById('gate-btn');
+  const form  = document.getElementById('gate-form');
+  const hint  = document.getElementById('gate-hint');
+  if (!input || !btn || !form) {
+    if (hint) hint.textContent = 'gate DOM missing — refresh hard (Ctrl+Shift+R)';
+    return;
+  }
+
+  const attempt = () => {
+    const val = input.value;
+    hint.textContent = 'checking…';
+    tryUnlock(val).then(ok => {
+      if (ok) return; // showApp() already ran inside tryUnlock
+      hint.textContent = 'wrong passphrase';
+      input.classList.add('shake');
+      setTimeout(() => input.classList.remove('shake'), 500);
+      input.value = '';
+      input.focus();
+    }).catch(err => {
+      hint.textContent = 'error: ' + (err && err.message ? err.message : String(err));
+    });
+  };
+
+  btn.addEventListener('click', attempt);
+  form.addEventListener('submit', (e) => { e.preventDefault(); attempt(); });
+}
+
+if (localStorage.getItem('cd_unlocked') === PASS_VERSION) {
+  showApp();
+} else {
+  bindGate();
+}
+
+// ===== Detail-page logic =====
+// STATE declared near top of script (above the gate) so showApp() works
+// even when localStorage pre-unlocks at script-load time.
+// fmt() comes from shared/charts.js
+
+function init() {
+  // Resolve campaign key from URL
+  const params = new URLSearchParams(location.search);
+  const key = (params.get('campaign') || '').toLowerCase();
+  if (!['jordan', 'christy', 'kalehua', 'paele'].includes(key)) {
+    document.getElementById('app').innerHTML =
+      `<div class="error-state" style="margin:80px auto;max-width:600px">
+         Missing or invalid <code>?campaign=</code> param.
+         <br><br><a class="back-link" href="index.html">← Back to Central</a>
+       </div>`;
+    return;
+  }
+  STATE.campaignKey = key;
+
+  // Load brand module (per-campaign CSS overrides)
+  const brandLink = document.createElement('link');
+  brandLink.rel = 'stylesheet';
+  brandLink.href = `shared/brand/${key}.css`;
+  document.head.appendChild(brandLink);
+
+  document.body.setAttribute('data-campaign', key);
+
+  // Bind period toggle
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      STATE.period = btn.dataset.period;
+      render();
+    });
+  });
+
+  loadData();
+  setInterval(loadData, 30 * 60 * 1000);
+  setInterval(() => { if (STATE.data) renderMeta(); }, 60 * 1000);
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(`data/${STATE.campaignKey}.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    STATE.data = await r.json();
+    render();
+  } catch (e) {
+    document.getElementById('app').innerHTML =
+      `<div class="error-state" style="margin:80px auto;max-width:600px">
+         Failed to load data/${STATE.campaignKey}.json — ${e.message}
+       </div>`;
+  }
+}
+
+function pickSide(side, period) {
+  const suffix = period === 'total' ? 'total' :
+                 period === 'week'  ? 'week'  : 'month';
+  const goalSuffix = period === 'total' ? 'total' :
+                     period === 'week'  ? 'weekly' : 'monthly';
+  return {
+    count: side[`count_${suffix}`],
+    goal:  side[`goal_${goalSuffix}`],
+    pct:   side[`pct_${suffix}`],
+    window: side[`${suffix === 'total' ? '' : (suffix + '_')}window`],
+  };
+}
+
+function windowFor(side, period) {
+  if (period === 'week')  return side.week_window;
+  if (period === 'month') return side.month_window;
+  return null;
+}
+
+function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
+                      side, channel }) {
+  const period = STATE.period;
+  const view = pickSide(side, period);
+  const hasGoal = side.has_goal;
+
+  countEl.textContent = fmt(view.count);
+  goalEl.textContent  = hasGoal ? fmt(view.goal) : 'goal pending';
+  pctEl.textContent   = hasGoal ? `${(view.pct || 0).toFixed(0)}%` : '';
+  pctEl.className = 'num-pct ' +
+    (hasGoal ? colorFor(view.pct) : 'pending');
+
+  const win = windowFor(side, period);
+  windowEl.textContent = win
+    ? `${win[0]} → ${win[1]}`
+    : (period === 'total' ? 'all time' : '');
+
+  // Chart
+  const today = STATE.data.generated_at.slice(0, 10);
+  const todayHST = new Date(new Date(STATE.data.generated_at)
+    .toLocaleString('en-US', { timeZone: 'Pacific/Honolulu' }))
+    .toISOString().slice(0, 10);
+
+  // Pass the server's authoritative window so the chart's cumulative total
+  // matches the server-side count_week / count_month exactly.
+  const windowRange =
+    period === 'week'  ? side.week_window  :
+    period === 'month' ? side.month_window : null;
+
+  chartEl.innerHTML = renderLineWithTherm({
+    series: side.daily_series || [],
+    goal: view.goal,
+    hasGoal,
+    period,
+    today: todayHST,
+    channel,
+    windowRange,
+    baseline: side.baseline || 0,
+  });
+
+  // Foot line: pace or warning, plus baseline asterisk for doors
+  const baseline = side.baseline || 0;
+  const baselineNote = (channel === 'door' && baseline > 0)
+    ? `<span class="foot-baseline">* ${fmt(baseline)} canvassed before launch</span>`
+    : '';
+
+  let main = '';
+  if (!hasGoal) {
+    main = '<span class="foot-pending">goal pending — set values in goals.json</span>';
+  } else if (side.daily_series && side.daily_series.length) {
+    const cur = side.daily_series[side.daily_series.length - 1].count;
+    const noun = channel === 'door' ? 'new knocks today' : 'calls today';
+    main = `<span class="foot-meta">${fmt(cur)} ${noun}</span>`;
+  } else {
+    main = `<span class="foot-pending">no ${channel} data yet</span>`;
+  }
+
+  footEl.innerHTML = main + (baselineNote ? ' &nbsp;·&nbsp; ' + baselineNote : '');
+}
+
+function colorFor(pct) {
+  if (pct >= 80) return 'green';
+  if (pct >= 40) return 'orange';
+  return 'red';
+}
+
+function render() {
+  if (!STATE.data) return;
+  document.getElementById('campaign-title').textContent = STATE.data.name;
+  document.getElementById('campaign-candidate').textContent = STATE.data.candidate || '';
+
+  renderSide({
+    chartEl:  document.getElementById('doors-chart'),
+    countEl:  document.getElementById('doors-count'),
+    goalEl:   document.getElementById('doors-goal'),
+    pctEl:    document.getElementById('doors-pct'),
+    windowEl: document.getElementById('doors-window'),
+    footEl:   document.getElementById('doors-foot'),
+    side:     STATE.data.doors,
+    channel:  'door',
+  });
+
+  renderSide({
+    chartEl:  document.getElementById('phones-chart'),
+    countEl:  document.getElementById('phones-count'),
+    goalEl:   document.getElementById('phones-goal'),
+    pctEl:    document.getElementById('phones-pct'),
+    windowEl: document.getElementById('phones-window'),
+    footEl:   document.getElementById('phones-foot'),
+    side:     STATE.data.phones,
+    channel:  'phone',
+  });
+
+  // Warnings
+  const warns = (STATE.data.data_warnings || []);
+  const wrap = document.getElementById('warnings');
+  wrap.innerHTML = warns.length
+    ? `<ul class="warning-list">${warns.map(w => `<li>⚠ ${w}</li>`).join('')}</ul>`
+    : '';
+
+  renderMeta();
+}
+
+function renderMeta() {
+  if (!STATE.data) return;
+  const ts = new Date(STATE.data.generated_at);
+  const ago = Math.floor((Date.now() - ts.getTime()) / 60000);
+  document.getElementById('last-updated').textContent =
+    ago < 1 ? 'updated just now' : `updated ${ago} min ago`;
+  document.getElementById('footer-meta').textContent =
+    `${ts.toISOString().replace('T',' ').slice(0,16)} UTC`;
+}
+</script>
+</body>
+</html>

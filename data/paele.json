@@ -1,0 +1,111 @@
+{
+  "generated_at": "2026-05-21T11:23:55.022361+00:00",
+  "key": "paele",
+  "name": "Vote Paele",
+  "candidate": "Paele Kiakona",
+  "primary_color": "#B8542A",
+  "goal_end_date": "2026-07-21",
+  "doors_source": "list:41208",
+  "doors": {
+    "count_total": 57,
+    "count_week": 1,
+    "count_month": 1,
+    "goal_total": 3706,
+    "goal_weekly": 455,
+    "goal_monthly": 1821,
+    "pct_total": 1.5,
+    "pct_week": 0.2,
+    "pct_month": 0.1,
+    "week_window": [
+      "2026-05-18",
+      "2026-05-24"
+    ],
+    "month_window": [
+      "2026-05-01",
+      "2026-05-31"
+    ],
+    "daily_series": [
+      {
+        "date": "2026-05-21",
+        "count": 1
+      }
+    ],
+    "baseline": 56,
+    "has_goal": true
+  },
+  "phones": {
+    "count_total": 4,
+    "count_week": 0,
+    "count_month": 4,
+    "goal_total": 8489,
+    "goal_weekly": 1059,
+    "goal_monthly": 4236,
+    "pct_total": 0.0,
+    "pct_week": 0.0,
+    "pct_month": 0.1,
+    "week_window": [
+      "2026-05-18",
+      "2026-05-24"
+    ],
+    "month_window": [
+      "2026-05-01",
+      "2026-05-31"
+    ],
+    "daily_series": [
+      {
+        "date": "2026-05-09",
+        "count": 2
+      },
+      {
+        "date": "2026-05-10",
+        "count": 0
+      },
+      {
+        "date": "2026-05-11",
+        "count": 0
+      },
+      {
+        "date": "2026-05-12",
+        "count": 0
+      },
+      {
+        "date": "2026-05-13",
+        "count": 0
+      },
+      {
+        "date": "2026-05-14",
+        "count": 2
+      },
+      {
+        "date": "2026-05-15",
+        "count": 0
+      },
+      {
+        "date": "2026-05-16",
+        "count": 0
+      },
+      {
+        "date": "2026-05-17",
+        "count": 0
+      },
+      {
+        "date": "2026-05-18",
+        "count": 0
+      },
+      {
+        "date": "2026-05-19",
+        "count": 0
+      },
+      {
+        "date": "2026-05-20",
+        "count": 0
+      },
+      {
+        "date": "2026-05-21",
+        "count": 0
+      }
+    ],
+    "has_goal": true
+  },
+  "data_warnings": []
+}

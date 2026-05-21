@@ -1,0 +1,28 @@
+/* Christy for Hawaii — deep purple + mint (matches christy-phase-builder spec) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+[data-campaign="christy"] {
+  --bg:          #1F1547;
+  --surface:     #2C2160;
+  --surface-2:   #392D74;
+  --surface-3:   #463888;
+  --border:      #4A3F92;
+  --text:        #FFFFFF;
+  --text-secondary: #D4CCEB;
+  --text-dim:    #9C8FC4;
+
+  --accent:      #3DD9A1;
+  --door-color:  #3DD9A1;
+  --phone-color: #FFC857;
+
+  --green:       #3DD9A1;
+  --green-soft:  rgba(61, 217, 161, 0.16);
+  --orange:      #FFC857;
+  --orange-soft: rgba(255, 200, 87, 0.16);
+  --red:         #F87171;
+  --red-soft:    rgba(248, 113, 113, 0.16);
+
+  --font:        'Inter', -apple-system, sans-serif;
+  --font-display:'Outfit', 'Inter', sans-serif;
+  --font-head:   'Outfit', 'Anton', 'Impact', sans-serif;
+}

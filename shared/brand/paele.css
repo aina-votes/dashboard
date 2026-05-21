@@ -1,0 +1,26 @@
+/* Vote Paele — warm earthy orange + cream + olive */
+[data-campaign="paele"] {
+  --bg:          #FCEEDC;
+  --surface:     #FFF8EE;
+  --surface-2:   #F4E2C9;
+  --surface-3:   #E8D2B0;
+  --border:      #D9BF95;
+  --text:        #2A3415;
+  --text-secondary: #4A4520;
+  --text-dim:    #6B6038;
+
+  --accent:      #B8542A;
+  --door-color:  #4A5520;
+  --phone-color: #B8542A;
+
+  --green:       #4A5520;
+  --green-soft:  rgba(74, 85, 32, 0.14);
+  --orange:      #B8542A;
+  --orange-soft: rgba(184, 84, 42, 0.14);
+  --red:         #9C2D1A;
+  --red-soft:    rgba(156, 45, 26, 0.14);
+
+  --font:        'DM Sans', -apple-system, sans-serif;
+  --font-head:   'Anton', 'Impact', sans-serif;
+  --font-display:'Fraunces', 'Times New Roman', serif;
+}

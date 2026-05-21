@@ -1,0 +1,179 @@
+/* =====================================================================
+   Detail page styles: header, split layout, big numbers, SVG chart
+   ===================================================================== */
+
+.detail-header { align-items: center; }
+.detail-header .back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.detail-header .back-link:hover { color: var(--text); }
+
+/* ============ SPLIT LAYOUT ============ */
+.detail-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-bottom: 24px;
+}
+
+.side {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+.side[data-channel="door"]  { --channel-color: var(--door-color, var(--green)); }
+.side[data-channel="phone"] { --channel-color: var(--phone-color, var(--orange)); }
+
+.side-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.side-pill {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--channel-color);
+  color: var(--bg);
+}
+.side-window {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ============ BIG NUMBERS ============ */
+.side-numbers { display: flex; align-items: baseline; gap: 18px; }
+.num-stack { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.num-count {
+  font-family: var(--font-head);
+  font-size: 78px;
+  line-height: 0.88;
+  letter-spacing: 0.5px;
+  color: var(--channel-color);
+}
+.num-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font);
+  color: var(--text-secondary);
+}
+.num-of { font-style: italic; font-family: var(--font-display); color: var(--text-dim); font-size: 16px; }
+.num-goal {
+  font-family: var(--font-head);
+  font-size: 32px;
+  color: var(--text-dim);
+  letter-spacing: 0.4px;
+}
+.num-pct {
+  font-family: var(--font-head);
+  font-size: 24px;
+  margin-left: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.5px;
+}
+.num-pct.green   { background: var(--green-soft);   color: var(--green); }
+.num-pct.orange  { background: var(--orange-soft);  color: var(--orange); }
+.num-pct.red     { background: var(--red-soft);     color: var(--red); }
+.num-pct.pending { background: transparent; color: var(--text-dim); font-size: 14px; }
+
+/* ============ CHART ============ */
+.chart-wrap { width: 100%; }
+.chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: var(--mono);
+}
+.chart-grid { stroke: var(--surface-3); stroke-width: 1; stroke-dasharray: 2 4; }
+.chart-y-label,
+.chart-x-label {
+  font-size: 10px;
+  fill: var(--text-dim);
+}
+.chart-y-label { text-anchor: end; }
+.chart-area    { fill: var(--channel-color); opacity: 0.15; }
+.chart-line {
+  fill: none;
+  stroke: var(--channel-color);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.chart-dot {
+  fill: var(--channel-color);
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+/* Thermometer */
+.therm-track { fill: var(--surface-3); }
+.therm-tick { stroke: var(--text); stroke-width: 1; opacity: 0.5; }
+.therm-tick-label {
+  font-size: 10px;
+  fill: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+.therm-current {
+  font-family: var(--font-head);
+  font-size: 16px;
+  fill: var(--bg);
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+.therm-current-outside {
+  font-family: var(--font-head);
+  font-size: 14px;
+  fill: var(--text);
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+.therm-pct {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: var(--text-dim);
+}
+
+/* ============ FOOT / WARNINGS ============ */
+.side-foot {
+  margin-top: auto;
+  padding-top: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.foot-pending { color: var(--text-dim); font-style: italic; }
+.foot-meta { letter-spacing: 0.5px; }
+.foot-baseline { color: var(--text-dim); font-style: italic; }
+
+.warnings {
+  margin-bottom: 24px;
+}
+.warning-list {
+  list-style: none;
+  background: var(--orange-soft);
+  border: 1px solid var(--orange);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--orange);
+}
+.warning-list li { padding: 3px 0; }
