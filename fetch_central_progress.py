@@ -131,20 +131,25 @@ def count_users_with_property_set(chapter_id: int, slug: str) -> int:
     return n
 
 
-def fetch_calls_for_chapter(chapter_id: int, since_iso: str):
-    """Paginate /calls?chapter_id=X&_since=YYYY-MM-DD. `_since` is server-side
-    honored on /calls (verified 2026-05-21) and is critical for voter
-    chapters which can carry 6K+ historical calls from pre-campaign efforts."""
-    if not chapter_id or not since_iso:
+_CALLS_CACHE = {}  # since_iso -> list of all calls since then (cached per run)
+
+def fetch_all_calls_since(since_iso: str):
+    """Paginate /calls?_since=YYYY-MM-DD WITHOUT any chapter filter.
+
+    Gotcha (verified 2026-05-21): when both `chapter_id` and `_since` are
+    sent on /calls, the chapter_id filter is silently ignored and the
+    endpoint returns ALL calls since the date regardless of chapter.
+    So we pull once globally and filter chapter client-side.
+    """
+    if not since_iso:
         return []
+    if since_iso in _CALLS_CACHE:
+        return _CALLS_CACHE[since_iso]
     rows = []
     offset = 0
     limit = 100
     while True:
-        j = st_get("/calls", {
-            "_limit": limit, "_offset": offset,
-            "chapter_id": chapter_id, "_since": since_iso,
-        })
+        j = st_get("/calls", {"_limit": limit, "_offset": offset, "_since": since_iso})
         page = j.get("data", [])
         if not page:
             break
@@ -155,23 +160,18 @@ def fetch_calls_for_chapter(chapter_id: int, since_iso: str):
         time.sleep(0.3)
         if offset > 50_000:
             break
-    return [c for c in rows if c.get("chapter_id") == chapter_id and c.get("created_at")]
+    _CALLS_CACHE[since_iso] = rows
+    return rows
 
 
 def fetch_calls_for_chapters(chapter_ids, since_iso: str):
-    """Union of /calls across each chapter in chapter_ids (dedup by id)."""
-    if not chapter_ids:
+    """Pull all calls since since_iso once, then filter client-side to
+    those whose chapter_id is in chapter_ids."""
+    if not chapter_ids or not since_iso:
         return []
-    seen = set()
-    out = []
-    for cid in chapter_ids:
-        for c in fetch_calls_for_chapter(cid, since_iso):
-            cid_pk = c.get("id")
-            if cid_pk and cid_pk in seen:
-                continue
-            seen.add(cid_pk)
-            out.append(c)
-    return out
+    chapter_set = set(chapter_ids)
+    return [c for c in fetch_all_calls_since(since_iso)
+            if c.get("chapter_id") in chapter_set and c.get("created_at")]
 
 
 def load_goals():
