@@ -385,9 +385,12 @@ def process_campaign(c: dict, goals: dict, today: date):
         if not baseline or not baseline_end_iso: return False
         return p_lo_iso <= phase_start and baseline_end_iso <= p_hi_iso
 
-    baseline_in_week  = period_covers_baseline(wk_lo.isoformat(), wk_hi.isoformat())
+    # Pre-launch knocks aren't dated per-day, so we never attribute them to a
+    # single week (would inflate Jordan/Christy whose narrow baseline windows
+    # technically fit in the current week). Month + custom use the coverage
+    # rule — same rule applied uniformly across all campaigns.
+    baseline_in_week  = False
     baseline_in_month = period_covers_baseline(mo_lo.isoformat(), mo_hi.isoformat())
-    if baseline_in_week:  doors_week  += baseline
     if baseline_in_month: doors_month += baseline
 
     def pct(num, denom):
