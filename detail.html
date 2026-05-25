@@ -329,12 +329,15 @@ function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
 
   // Pass the server's authoritative window so the chart's cumulative total
   // matches the server-side count_week / count_month exactly. For 'custom',
-  // use the user-picked range. For 'total', null means "all-time, unfiltered".
+  // use the user-picked range. For 'total', span the full elapsed phase
+  // (phase_start_date → today) so the x-axis is consistent and pads with
+  // zero-count days when data doesn't go back to phase start.
+  const phaseStart = STATE.data.phase_start_date;
   const windowRange =
     period === 'week'   ? side.week_window  :
     period === 'month'  ? side.month_window :
     period === 'custom' ? [CUSTOM.from, CUSTOM.to] :
-    null;
+    (phaseStart ? [phaseStart, todayHST] : null);
 
   chartEl.innerHTML = renderLineWithTherm({
     series: side.daily_series || [],

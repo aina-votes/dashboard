@@ -89,13 +89,14 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
   // Y-axis labels (3 ticks: 0, mid, top)
   const ticks = [0, Math.round(yMax / 2), yMax];
 
-  // X-axis labels: 4-6 evenly spaced across the window (using actual data
-  // points). For very short series we just show every available point.
+  // X-axis labels: show every day for short windows (≤8 days), else pick up
+  // to 7 evenly spaced. Using 7 instead of 6 means 7-day weeks get one label
+  // per day with no skipped indices (the old `Math.min(6, 7)` skipped idx 3).
   const xLabels = [];
   if (cum.length === 1) {
     xLabels.push({ i: 0, label: shortDate(cum[0].date), x: padL + chartW });
   } else if (cum.length > 1) {
-    const targetTicks = Math.min(6, cum.length);
+    const targetTicks = Math.min(7, cum.length);
     const seen = new Set();
     for (let t = 0; t < targetTicks; t++) {
       const idx = Math.round((cum.length - 1) * t / (targetTicks - 1));
