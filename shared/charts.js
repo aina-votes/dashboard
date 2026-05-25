@@ -47,11 +47,9 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
   // The series only goes through today (no future padding); the x-axis below
   // may still span past today when windowRange extends into the future.
   const win = scopeSeries(series, period, today, windowRange);
-  // For 'total' view we want the cumulative line to start at the baseline
-  // (pre-launch knocks). For period views we want it to start at 0 (only
-  // forward progress within the window matters).
-  const startAt = period === 'total' ? baseline : 0;
-  const cum = makeCumulative(win, startAt);
+  // Cumulative starts at whatever baseline the caller passes (caller decides
+  // per period: 0 unless this period covers the pre-launch baseline window).
+  const cum = makeCumulative(win, baseline);
 
   // y-axis max = goal (when hasGoal), otherwise the cumulative max (with headroom).
   const dataMax = cum.length ? cum[cum.length - 1].cum : 0;
