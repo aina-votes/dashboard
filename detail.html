@@ -254,12 +254,18 @@ async function loadData() {
 
 function pickSide(side, period) {
   if (period === 'custom') {
-    // Sum the daily series within CUSTOM.from..CUSTOM.to (excludes baseline).
-    // Goal pro-rated from total cycle goal by # of days in the range.
+    // Sum the daily series within CUSTOM.from..CUSTOM.to. Adds baseline iff
+    // the range fully covers [phase_start, baseline_end] (matches server's
+    // baseline_in_week / _in_month logic).
     const series = side.daily_series || [];
-    const count = series.reduce((sum, p) =>
+    let count = series.reduce((sum, p) =>
       (CUSTOM.from && CUSTOM.to && p.date >= CUSTOM.from && p.date <= CUSTOM.to)
         ? sum + (p.count || 0) : sum, 0);
+    const baselineCovered = side.baseline && CUSTOM.from && CUSTOM.to
+      && side.baseline_end_date && STATE.data.phase_start_date
+      && CUSTOM.from <= STATE.data.phase_start_date
+      && side.baseline_end_date <= CUSTOM.to;
+    if (baselineCovered) count += side.baseline;
     let goal = null, pct = null;
     const phaseDays = STATE.data && STATE.data.phase_total_days;
     const totalGoal = side.goal_total - (side.baseline || 0);
@@ -340,6 +346,21 @@ function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
     period === 'custom' ? [CUSTOM.from, CUSTOM.to] :
     (phaseStart && phaseEnd ? [phaseStart, phaseEnd] : null);
 
+  // Baseline credit: include in chart cumulative iff the period covers the
+  // baseline window (matches server-side `baseline_in_week` / `_in_month`).
+  // For custom, compute client-side: range must fully cover [phase_start, baseline_end].
+  const includeBaseline = (() => {
+    if (!side.baseline) return false;
+    if (period === 'total') return true;
+    if (period === 'week') return !!side.baseline_in_week;
+    if (period === 'month') return !!side.baseline_in_month;
+    if (period === 'custom' && CUSTOM.from && CUSTOM.to && side.baseline_end_date && STATE.data.phase_start_date) {
+      return CUSTOM.from <= STATE.data.phase_start_date && side.baseline_end_date <= CUSTOM.to;
+    }
+    return false;
+  })();
+  const customBaselineCount = (isCustom && includeBaseline) ? side.baseline : 0;
+
   chartEl.innerHTML = renderLineWithTherm({
     series: side.daily_series || [],
     goal: isCustom ? (customHasGoal ? view.goal : null) : view.goal,
@@ -348,7 +369,7 @@ function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
     today: todayHST,
     channel,
     windowRange,
-    baseline: isCustom ? 0 : (side.baseline || 0),
+    baseline: includeBaseline ? side.baseline : 0,
   });
 
   // Foot line: pace or warning, plus baseline asterisk for doors

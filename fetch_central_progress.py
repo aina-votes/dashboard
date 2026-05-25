@@ -364,11 +364,31 @@ def process_campaign(c: dict, goals: dict, today: date):
         g.get("doors_weekly_override"), g.get("doors_monthly_override"),
     )
 
-    # Weekly / monthly: NEW knocks within window (excludes baseline)
+    # Weekly / monthly: NEW knocks within window (excludes baseline by default)
     wk_lo, wk_hi = week_window(today)
     mo_lo, mo_hi = month_window(today)
     doors_week  = sum_in_range(doors_delta_series, wk_lo.isoformat(), wk_hi.isoformat())
     doors_month = sum_in_range(doors_delta_series, mo_lo.isoformat(), mo_hi.isoformat())
+
+    # Baseline credit: knocks done before the first snapshot are dated as an
+    # unknown spread across [phase_start, first_snapshot - 1]. Credit them to
+    # a period iff that period FULLY contains the baseline window — keeps
+    # Paele's 56 in May (where they happened) without dumping Jordan's 3934
+    # legacy knocks into May counts when most happened earlier.
+    first_snap_iso = doors_delta_series[0]["date"] if doors_delta_series else None
+    baseline_end_iso = None
+    if first_snap_iso:
+        baseline_end_iso = (datetime.fromisoformat(first_snap_iso).date()
+                            - timedelta(days=1)).isoformat()
+
+    def period_covers_baseline(p_lo_iso: str, p_hi_iso: str) -> bool:
+        if not baseline or not baseline_end_iso: return False
+        return p_lo_iso <= phase_start and baseline_end_iso <= p_hi_iso
+
+    baseline_in_week  = period_covers_baseline(wk_lo.isoformat(), wk_hi.isoformat())
+    baseline_in_month = period_covers_baseline(mo_lo.isoformat(), mo_hi.isoformat())
+    if baseline_in_week:  doors_week  += baseline
+    if baseline_in_month: doors_month += baseline
 
     def pct(num, denom):
         return round(100 * num / denom, 1) if denom > 0 else 0
@@ -387,6 +407,9 @@ def process_campaign(c: dict, goals: dict, today: date):
         "month_window":[mo_lo.isoformat(), mo_hi.isoformat()],
         "daily_series":doors_delta_series,
         "baseline":    baseline,
+        "baseline_in_week":  baseline_in_week,
+        "baseline_in_month": baseline_in_month,
+        "baseline_end_date": baseline_end_iso,
         "has_goal":    displayed_doors_goal > 0,
     }
 
