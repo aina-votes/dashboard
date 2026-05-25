@@ -446,16 +446,45 @@ def main():
     today = hst_today()
     goals = load_goals()
 
+    # Preserve prior tiles so a transient API failure (e.g. 429 on /calls) doesn't
+    # drop a campaign from the home page entirely. On error, re-emit the previous
+    # tile flagged stale rather than omitting the campaign.
+    prev_central_path = DATA_DIR / "central.json"
+    prev_tile_by_key: dict[str, dict] = {}
+    if prev_central_path.exists():
+        try:
+            prev = json.loads(prev_central_path.read_text(encoding="utf-8"))
+            for t in prev.get("campaigns", []):
+                if t.get("key"):
+                    prev_tile_by_key[t["key"]] = t
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    def fallback_tile(c, err):
+        prior = prev_tile_by_key.get(c["key"])
+        if not prior:
+            print(f"  → no prior tile to fall back to; campaign omitted")
+            return None
+        stale = dict(prior)
+        stale["stale"] = True
+        stale["stale_reason"] = f"{type(err).__name__}: {err}"
+        print(f"  → keeping prior tile (marked stale)")
+        return stale
+
     tiles = []
     for c in CAMPAIGNS:
         print(f"\n=== {c['name']} ({c['key']}) ===")
         try:
             tile, detail = process_campaign(c, goals, today)
         except requests.exceptions.RequestException as e:
-            print(f"  ERROR (skipping campaign): {type(e).__name__}: {e}")
+            print(f"  ERROR: {type(e).__name__}: {e}")
+            t = fallback_tile(c, e)
+            if t: tiles.append(t)
             continue
         except Exception as e:
-            print(f"  ERROR (skipping campaign): {type(e).__name__}: {e}")
+            print(f"  ERROR: {type(e).__name__}: {e}")
+            t = fallback_tile(c, e)
+            if t: tiles.append(t)
             continue
 
         tiles.append(tile)
