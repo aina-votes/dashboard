@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T09:30:09.181785+00:00",
+  "generated_at": "2026-05-25T10:00:09.625791+00:00",
   "key": "kalehua",
   "name": "Kalehua for Hawaii",
   "candidate": "Kalehua Kaopua",
@@ -19,8 +19,8 @@
     "pct_week": 0.0,
     "pct_month": 0.0,
     "week_window": [
-      "2026-05-18",
-      "2026-05-24"
+      "2026-05-25",
+      "2026-05-31"
     ],
     "month_window": [
       "2026-05-01",
@@ -42,6 +42,10 @@
       {
         "date": "2026-05-24",
         "count": 0
+      },
+      {
+        "date": "2026-05-25",
+        "count": 0
       }
     ],
     "baseline": 0,
@@ -61,8 +65,8 @@
     "pct_week": 0.0,
     "pct_month": 0.0,
     "week_window": [
-      "2026-05-18",
-      "2026-05-24"
+      "2026-05-25",
+      "2026-05-31"
     ],
     "month_window": [
       "2026-05-01",
