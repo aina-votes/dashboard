@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T03:11:38.994125+00:00",
+  "generated_at": "2026-05-25T03:20:56.286929+00:00",
   "key": "paele",
   "name": "Vote Paele",
   "candidate": "Paele Kiakona",
@@ -9,15 +9,15 @@
   "phase_total_days": 72,
   "doors_source": "list:41208",
   "doors": {
-    "count_total": 85,
-    "count_week": 29,
-    "count_month": 29,
-    "goal_total": 3706,
-    "goal_weekly": 355,
-    "goal_monthly": 1521,
-    "pct_total": 2.3,
-    "pct_week": 8.2,
-    "pct_month": 1.9,
+    "count_total": 87,
+    "count_week": 31,
+    "count_month": 31,
+    "goal_total": 1868,
+    "goal_weekly": 176,
+    "goal_monthly": 755,
+    "pct_total": 4.7,
+    "pct_week": 17.6,
+    "pct_month": 4.1,
     "week_window": [
       "2026-05-18",
       "2026-05-24"
@@ -41,7 +41,7 @@
       },
       {
         "date": "2026-05-24",
-        "count": 21
+        "count": 23
       }
     ],
     "baseline": 56,

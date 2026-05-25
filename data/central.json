@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T03:11:38.994797+00:00",
+  "generated_at": "2026-05-25T03:20:56.287678+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -100,15 +100,15 @@
       "candidate": "Paele Kiakona",
       "primary_color": "#B8542A",
       "doors": {
-        "count_total": 85,
-        "count_week": 29,
-        "count_month": 29,
-        "goal_total": 3706,
-        "goal_weekly": 355,
-        "goal_monthly": 1521,
-        "pct_total": 2.3,
-        "pct_week": 8.2,
-        "pct_month": 1.9,
+        "count_total": 87,
+        "count_week": 31,
+        "count_month": 31,
+        "goal_total": 1868,
+        "goal_weekly": 176,
+        "goal_monthly": 755,
+        "pct_total": 4.7,
+        "pct_week": 17.6,
+        "pct_month": 4.1,
         "has_goal": true,
         "baseline": 56
       },
