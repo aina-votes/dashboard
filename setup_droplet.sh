@@ -39,13 +39,24 @@ git config user.name  "Sam Peck"
 TOKEN=$(grep '^GITHUB_TOKEN=' "$ENV_SRC" | cut -d= -f2-)
 git remote set-url origin "https://aina-votes:${TOKEN}@github.com/aina-votes/dashboard.git"
 
-# Refresh script: fetch -> if anything in data/ changed, commit + push
+# Refresh script: sync to remote -> fetch fresh data -> commit + push.
+# The fetch+reset preamble prevents droplet/remote divergence after upstream
+# code pushes (without it, the cron's push gets rejected forever once anyone
+# else pushes to main). History JSONLs are preserved across the reset since
+# they're append-only data the time-series chart depends on.
 cat > /root/campaign-dashboard-refresh.sh <<'EOS'
 #!/bin/bash
 set -e
 cd /root/campaign-dashboard
+
+BACKUP=$(mktemp -d)
+cp -f data/history/*.jsonl "$BACKUP/" 2>/dev/null || true
+git fetch origin main
+git reset --hard origin/main
+cp -f "$BACKUP"/*.jsonl data/history/ 2>/dev/null || true
+rm -rf "$BACKUP"
+
 python3 fetch_central_progress.py >> /root/logs/campaign-dashboard.log 2>&1
-# Stage data/ — central.json, per-campaign JSON, history JSONL files
 git add data/
 if ! git diff --cached --quiet; then
   git commit -m "auto: refresh dashboard data" >> /root/logs/campaign-dashboard.log 2>&1
