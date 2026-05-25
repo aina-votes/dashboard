@@ -44,6 +44,8 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
   // Build cumulative series scoped to the current period window.
   // windowRange (when provided by the caller) is the authoritative [from, to]
   // pair from server-side compute; falls back to client-side last-N-days otherwise.
+  // The series only goes through today (no future padding); the x-axis below
+  // may still span past today when windowRange extends into the future.
   const win = scopeSeries(series, period, today, windowRange);
   // For 'total' view we want the cumulative line to start at the baseline
   // (pre-launch knocks). For period views we want it to start at 0 (only
@@ -55,9 +57,25 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
   const dataMax = cum.length ? cum[cum.length - 1].cum : 0;
   const yMax = hasGoal && goal > 0 ? goal : Math.max(1, Math.ceil(dataMax * 1.15));
 
-  // Map a (date, value) into SVG (x, y) coords. X is by date index, evenly spaced.
+  // X positioning: when a windowRange is provided, the chart's x-axis spans
+  // the FULL window (potentially past today), and each data point's x is
+  // computed by its date offset from window start. Without a windowRange,
+  // fall back to evenly-spaced indices.
+  const useDateX = !!(windowRange && windowRange.length === 2);
+  let winStartDate, winEndDate, totalWindowDays;
+  if (useDateX) {
+    winStartDate = new Date(windowRange[0] + 'T00:00:00');
+    winEndDate = new Date(windowRange[1] + 'T00:00:00');
+    totalWindowDays = Math.round((winEndDate - winStartDate) / 86400000) + 1;
+  }
+  const dayOffsetFromStart = (dateISO) => {
+    const d = new Date(dateISO + 'T00:00:00');
+    return Math.round((d - winStartDate) / 86400000);
+  };
   const n = Math.max(2, cum.length);
-  const xAt = (i) => padL + (chartW * i / (n - 1));
+  const xAt = useDateX
+    ? (i) => padL + chartW * dayOffsetFromStart(cum[i].date) / Math.max(1, totalWindowDays - 1)
+    : (i) => padL + (chartW * i / (n - 1));
   const yAt = (v) => padT + chartH - (chartH * Math.min(v, yMax) / yMax);
 
   // Build the line path
@@ -89,12 +107,26 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
   // Y-axis labels (3 ticks: 0, mid, top)
   const ticks = [0, Math.round(yMax / 2), yMax];
 
-  // X-axis labels: show every day for short windows (≤8 days), else pick up
-  // to 7 evenly spaced. Using 7 instead of 6 means 7-day weeks get one label
-  // per day with no skipped indices (the old `Math.min(6, 7)` skipped idx 3).
+  // X-axis labels: when a windowRange is set, sample dates evenly across the
+  // FULL window (including any future portion past today), so e.g. All Time
+  // shows 5/11 → 7/21 even if data only goes through today. Otherwise sample
+  // from existing data points. Using 7 instead of 6 means 7-day weeks get one
+  // label per day with no skipped indices.
   const xLabels = [];
-  if (cum.length === 1) {
-    xLabels.push({ i: 0, label: shortDate(cum[0].date), x: padL + chartW });
+  if (useDateX) {
+    const targetTicks = Math.min(7, totalWindowDays);
+    for (let t = 0; t < targetTicks; t++) {
+      const off = Math.round((totalWindowDays - 1) * t / Math.max(1, targetTicks - 1));
+      const d = new Date(winStartDate);
+      d.setDate(winStartDate.getDate() + off);
+      const iso = d.toISOString().slice(0, 10);
+      xLabels.push({
+        label: shortDate(iso),
+        x: padL + chartW * off / Math.max(1, totalWindowDays - 1),
+      });
+    }
+  } else if (cum.length === 1) {
+    xLabels.push({ label: shortDate(cum[0].date), x: padL + chartW });
   } else if (cum.length > 1) {
     const targetTicks = Math.min(7, cum.length);
     const seen = new Set();
@@ -102,7 +134,7 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
       const idx = Math.round((cum.length - 1) * t / (targetTicks - 1));
       if (seen.has(idx)) continue;
       seen.add(idx);
-      xLabels.push({ i: idx, label: shortDate(cum[idx].date), x: xAt(idx) });
+      xLabels.push({ label: shortDate(cum[idx].date), x: xAt(idx) });
     }
   }
 
@@ -168,10 +200,13 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
 function scopeSeries(series, period, todayISO, windowRange) {
   // Prefer the explicit window from the server when present — keeps the
   // chart in sync with the server's count_week / count_month totals AND
-  // makes the x-axis span the full selected period (even on dates with no
-  // data yet, e.g. doors history only started 5/21 but the week is 5/18-5/24).
+  // makes the x-axis span the full selected period. Series is padded with
+  // count:0 for missing dates within the window, but capped at today so
+  // the cumulative line doesn't extend flat into future dates (e.g. All
+  // Time spans phase_start → goal_end but data only exists through today).
   if (windowRange && windowRange.length === 2) {
-    return padSeriesToRange(series || [], windowRange[0], windowRange[1]);
+    const padTo = windowRange[1] < todayISO ? windowRange[1] : todayISO;
+    return padSeriesToRange(series || [], windowRange[0], padTo);
   }
   if (!series || !series.length) return [];
   if (period === 'total') {
