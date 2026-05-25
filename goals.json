@@ -34,11 +34,12 @@
     "phones_monthly_override": null
   },
   "paele": {
-    "doors_total": 3650,
+    "doors_total": 1812,
     "doors_weekly_override": null,
     "doors_monthly_override": null,
     "phones_total": 8489,
     "phones_weekly_override": null,
-    "phones_monthly_override": null
+    "phones_monthly_override": null,
+    "_note": "Pulled from Paele Phases.json export 2026-05-25: PAELE-SUPER-VTR doors universe 1812 × 1 pass; LAHUI-REGULAR-PPL phones universe 8489 × 1 pass; both 2026-05-11 → 2026-07-21"
   }
 }
