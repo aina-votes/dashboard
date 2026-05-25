@@ -260,7 +260,17 @@ function pickSide(side, period) {
     const count = series.reduce((sum, p) =>
       (CUSTOM.from && CUSTOM.to && p.date >= CUSTOM.from && p.date <= CUSTOM.to)
         ? sum + (p.count || 0) : sum, 0);
-    return { count, goal: null, pct: null, window: [CUSTOM.from, CUSTOM.to] };
+    let goal = null, pct = null;
+    const phaseDays = STATE.data && STATE.data.phase_total_days;
+    const totalGoal = side.goal_total - (side.baseline || 0);
+    if (CUSTOM.from && CUSTOM.to && phaseDays > 0 && totalGoal > 0) {
+      const rangeDays = Math.round(
+        (new Date(CUSTOM.to + 'T00:00:00') - new Date(CUSTOM.from + 'T00:00:00'))
+        / (1000 * 60 * 60 * 24)) + 1;
+      goal = Math.round(totalGoal * rangeDays / phaseDays);
+      pct = goal > 0 ? (100 * count / goal) : null;
+    }
+    return { count, goal, pct, window: [CUSTOM.from, CUSTOM.to] };
   }
   const suffix = period === 'total' ? 'total' :
                  period === 'week'  ? 'week'  : 'month';
@@ -288,11 +298,18 @@ function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
   const hasGoal = side.has_goal;
 
   const isCustom = period === 'custom';
+  const customHasGoal = isCustom && view.goal != null && view.goal > 0;
   countEl.textContent = fmt(view.count);
   if (isCustom) {
-    goalEl.textContent = 'in range';
-    pctEl.textContent  = '';
-    pctEl.className    = 'num-pct pending';
+    if (customHasGoal) {
+      goalEl.textContent = fmt(view.goal);
+      pctEl.textContent  = `${(view.pct || 0).toFixed(0)}%`;
+      pctEl.className = 'num-pct ' + colorFor(view.pct);
+    } else {
+      goalEl.textContent = 'in range';
+      pctEl.textContent  = '';
+      pctEl.className    = 'num-pct pending';
+    }
   } else {
     goalEl.textContent = hasGoal ? fmt(view.goal) : 'goal pending';
     pctEl.textContent  = hasGoal ? `${(view.pct || 0).toFixed(0)}%` : '';
@@ -321,8 +338,8 @@ function renderSide({ chartEl, countEl, goalEl, pctEl, windowEl, footEl,
 
   chartEl.innerHTML = renderLineWithTherm({
     series: side.daily_series || [],
-    goal: isCustom ? null : view.goal,
-    hasGoal: !isCustom && hasGoal,
+    goal: isCustom ? (customHasGoal ? view.goal : null) : view.goal,
+    hasGoal: isCustom ? customHasGoal : hasGoal,
     period,
     today: todayHST,
     channel,

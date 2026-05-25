@@ -165,13 +165,14 @@ function renderLineWithTherm({ series, goal, hasGoal, period, today, channel, wi
 // Helpers
 // =====================================================================
 function scopeSeries(series, period, todayISO, windowRange) {
-  if (!series || !series.length) return [];
   // Prefer the explicit window from the server when present — keeps the
-  // chart in sync with the server's count_week / count_month totals.
+  // chart in sync with the server's count_week / count_month totals AND
+  // makes the x-axis span the full selected period (even on dates with no
+  // data yet, e.g. doors history only started 5/21 but the week is 5/18-5/24).
   if (windowRange && windowRange.length === 2) {
-    const [fromISO, toISO] = windowRange;
-    return series.filter(p => p.date >= fromISO && p.date <= toISO);
+    return padSeriesToRange(series || [], windowRange[0], windowRange[1]);
   }
+  if (!series || !series.length) return [];
   if (period === 'total') {
     return series.filter(p => p.date <= todayISO);
   }
@@ -180,6 +181,22 @@ function scopeSeries(series, period, todayISO, windowRange) {
   from.setDate(today.getDate() - (period === 'week' ? 6 : 29));
   const fromISO = from.toISOString().slice(0, 10);
   return series.filter(p => p.date >= fromISO && p.date <= todayISO);
+}
+
+// Return a series with one entry per day in [fromISO, toISO] inclusive.
+// Existing series entries are preserved; missing dates get count: 0 so the
+// chart's x-axis spans the entire selected window.
+function padSeriesToRange(series, fromISO, toISO) {
+  const byDate = new Map(series.map(p => [p.date, p]));
+  const out = [];
+  const cur = new Date(fromISO + 'T00:00:00');
+  const end = new Date(toISO + 'T00:00:00');
+  while (cur <= end) {
+    const iso = cur.toISOString().slice(0, 10);
+    out.push(byDate.get(iso) || { date: iso, count: 0 });
+    cur.setDate(cur.getDate() + 1);
+  }
+  return out;
 }
 
 // Both phones and (new-style) doors series are per-day NEW counts.

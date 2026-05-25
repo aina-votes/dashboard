@@ -178,20 +178,25 @@ def load_goals():
     return json.loads((ROOT / "goals.json").read_text(encoding="utf-8"))
 
 
-def months_remaining(primary_iso: str, today: date) -> float:
-    """Calendar months from today to primary (>=1.0 to avoid div-by-zero)."""
-    primary = datetime.fromisoformat(primary_iso).date()
-    days = max(1, (primary - today).days)
-    return max(1.0, days / 30.4375)
+def phase_total_days(phase_start_iso: str, phase_end_iso: str) -> int:
+    """Days from phase_start through phase_end inclusive (>= 1)."""
+    s = datetime.fromisoformat(phase_start_iso).date()
+    e = datetime.fromisoformat(phase_end_iso).date()
+    return max(1, (e - s).days + 1)
 
 
-def derive_period_goals(total: int, primary_iso: str, today: date,
+def derive_period_goals(total: int, phase_start_iso: str, phase_end_iso: str,
                         weekly_override, monthly_override):
+    """Constant-pace per-period targets across the full phase length, matching
+    the GOTV phase builder's formula. weekly/monthly stay fixed for the whole
+    phase rather than ratcheting up as time runs out — that's what Sam plans
+    against. Overrides bypass the formula entirely.
+    """
     if total <= 0:
         return 0, 0
-    months_left = months_remaining(primary_iso, today)
-    monthly = monthly_override if monthly_override else round(total / months_left)
-    weekly = weekly_override if weekly_override else round(monthly / 4)
+    days = phase_total_days(phase_start_iso, phase_end_iso)
+    monthly = monthly_override if monthly_override else round(total * 30 / days)
+    weekly = weekly_override if weekly_override else round(total * 7 / days)
     return int(weekly), int(monthly)
 
 
@@ -331,6 +336,7 @@ def compute_side(count: int, daily_series, total_goal: int, weekly_goal: int,
 def process_campaign(c: dict, goals: dict, today: date):
     g = goals.get(c["key"], {})
     goal_end = c.get("goal_end_date") or c.get("primary_date")
+    phase_start = c.get("phase_start_date") or "2026-01-01"
 
     # ---- Doors side ----
     if c.get("canvassed_list_id"):
@@ -354,7 +360,7 @@ def process_campaign(c: dict, goals: dict, today: date):
     configured_doors_goal = int(g.get("doors_total", 0) or 0)
     displayed_doors_goal = configured_doors_goal + baseline
     doors_weekly_goal, doors_monthly_goal = derive_period_goals(
-        configured_doors_goal, goal_end, today,
+        configured_doors_goal, phase_start, goal_end,
         g.get("doors_weekly_override"), g.get("doors_monthly_override"),
     )
 
@@ -387,7 +393,6 @@ def process_campaign(c: dict, goals: dict, today: date):
     # ---- Phones side ----
     # `_since` bounded by the campaign's phone phase start; without it we
     # pick up pre-campaign call history (other orgs/efforts in the same chapter).
-    phase_start = c.get("phase_start_date") or "2026-01-01"
     calls = fetch_calls_for_chapters(c.get("actions_chapters") or [], phase_start)
     phones_count = len(calls)
     if calls:
@@ -399,7 +404,7 @@ def process_campaign(c: dict, goals: dict, today: date):
 
     phones_total_goal = int(g.get("phones_total", 0) or 0)
     phones_weekly, phones_monthly = derive_period_goals(
-        phones_total_goal, goal_end, today,
+        phones_total_goal, phase_start, goal_end,
         g.get("phones_weekly_override"), g.get("phones_monthly_override"),
     )
     phones = compute_side(phones_count, phones_series,
@@ -417,7 +422,9 @@ def process_campaign(c: dict, goals: dict, today: date):
         "name": c["name"],
         "candidate": c["candidate"],
         "primary_color": c["primary_color"],
+        "phase_start_date": phase_start,
         "goal_end_date": goal_end,
+        "phase_total_days": phase_total_days(phase_start, goal_end),
         "doors_source": doors_source,
         "doors": doors,
         "phones": phones,
