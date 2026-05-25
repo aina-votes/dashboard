@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25T05:30:17.191102+00:00",
+  "generated_at": "2026-05-25T05:43:00.435622+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -8,14 +8,14 @@
       "primary_color": "#D4FF00",
       "doors": {
         "count_total": 3934,
-        "count_week": 0,
-        "count_month": 0,
+        "count_week": 3934,
+        "count_month": 3934,
         "goal_total": 7978,
         "goal_weekly": 442,
         "goal_monthly": 1896,
         "pct_total": 49.3,
-        "pct_week": 0.0,
-        "pct_month": 0.0,
+        "pct_week": 890.0,
+        "pct_month": 207.5,
         "has_goal": true,
         "baseline": 3934
       },
@@ -39,14 +39,14 @@
       "primary_color": "#3DD9A1",
       "doors": {
         "count_total": 2113,
-        "count_week": 0,
-        "count_month": 0,
+        "count_week": 2113,
+        "count_month": 2113,
         "goal_total": 5437,
         "goal_weekly": 364,
         "goal_monthly": 1558,
         "pct_total": 38.9,
-        "pct_week": 0.0,
-        "pct_month": 0.0,
+        "pct_week": 580.5,
+        "pct_month": 135.6,
         "has_goal": true,
         "baseline": 2113
       },
@@ -102,13 +102,13 @@
       "doors": {
         "count_total": 87,
         "count_week": 31,
-        "count_month": 31,
+        "count_month": 87,
         "goal_total": 1868,
         "goal_weekly": 176,
         "goal_monthly": 755,
         "pct_total": 4.7,
         "pct_week": 17.6,
-        "pct_month": 4.1,
+        "pct_month": 11.5,
         "has_goal": true,
         "baseline": 56
       },
