@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-27T03:30:09.982258+00:00",
+  "generated_at": "2026-05-27T04:00:11.932769+00:00",
   "key": "christy",
   "name": "Christy for Hawaii",
   "candidate": "Christy Macpherson",
@@ -59,15 +59,15 @@
     "has_goal": true
   },
   "phones": {
-    "count_total": 437,
-    "count_week": 8,
-    "count_month": 437,
+    "count_total": 471,
+    "count_week": 42,
+    "count_month": 471,
     "goal_total": 8193,
     "goal_weekly": 896,
     "goal_monthly": 3840,
-    "pct_total": 5.3,
-    "pct_week": 0.9,
-    "pct_month": 11.4,
+    "pct_total": 5.7,
+    "pct_week": 4.7,
+    "pct_month": 12.3,
     "week_window": [
       "2026-05-25",
       "2026-05-31"
@@ -111,7 +111,7 @@
       },
       {
         "date": "2026-05-26",
-        "count": 6
+        "count": 40
       }
     ],
     "has_goal": true
