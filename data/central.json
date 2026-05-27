@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-27T09:30:22.280875+00:00",
+  "generated_at": "2026-05-27T10:00:21.932113+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -51,14 +51,14 @@
         "baseline": 2113
       },
       "phones": {
-        "count_total": 778,
-        "count_week": 349,
-        "count_month": 778,
+        "count_total": 779,
+        "count_week": 350,
+        "count_month": 779,
         "goal_total": 8193,
         "goal_weekly": 896,
         "goal_monthly": 3840,
         "pct_total": 9.5,
-        "pct_week": 39.0,
+        "pct_week": 39.1,
         "pct_month": 20.3,
         "has_goal": true
       }
