@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-28T00:30:12.191935+00:00",
+  "generated_at": "2026-05-28T01:00:11.873343+00:00",
   "key": "jordan",
   "name": "Jordan for Hawaii",
   "candidate": "Jordan Nakamura",
@@ -9,13 +9,13 @@
   "phase_total_days": 64,
   "doors_source": "list:41845",
   "doors": {
-    "count_total": 3934,
+    "count_total": 3263,
     "count_week": 0,
     "count_month": 3934,
     "goal_total": 7978,
     "goal_weekly": 442,
     "goal_monthly": 1896,
-    "pct_total": 49.3,
+    "pct_total": 40.9,
     "pct_week": 0.0,
     "pct_month": 207.5,
     "week_window": [

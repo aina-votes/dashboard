@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-28T00:30:23.690211+00:00",
+  "generated_at": "2026-05-28T01:00:23.291382+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -7,13 +7,13 @@
       "candidate": "Jordan Nakamura",
       "primary_color": "#D4FF00",
       "doors": {
-        "count_total": 3934,
+        "count_total": 3263,
         "count_week": 0,
         "count_month": 3934,
         "goal_total": 7978,
         "goal_weekly": 442,
         "goal_monthly": 1896,
-        "pct_total": 49.3,
+        "pct_total": 40.9,
         "pct_week": 0.0,
         "pct_month": 207.5,
         "has_goal": true,
