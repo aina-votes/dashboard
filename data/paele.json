@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-30T09:00:46.855390+00:00",
+  "generated_at": "2026-05-30T10:30:41.133645+00:00",
   "key": "paele",
   "name": "Vote Paele",
   "candidate": "Paele Kiakona",
@@ -62,6 +62,10 @@
       {
         "date": "2026-05-29",
         "count": 21
+      },
+      {
+        "date": "2026-05-30",
+        "count": 0
       }
     ],
     "baseline": 56,
@@ -156,6 +160,10 @@
       {
         "date": "2026-05-29",
         "count": 314
+      },
+      {
+        "date": "2026-05-30",
+        "count": 0
       }
     ],
     "has_goal": true
