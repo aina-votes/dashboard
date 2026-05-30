@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-30T10:30:41.134411+00:00",
+  "generated_at": "2026-05-30T11:00:29.613661+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -123,7 +123,9 @@
         "pct_week": 38.1,
         "pct_month": 9.0,
         "has_goal": true
-      }
+      },
+      "stale": true,
+      "stale_reason": "HTTPError: 429 on /calls"
     }
   ]
 }
