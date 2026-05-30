@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-30T06:00:25.827228+00:00",
+  "generated_at": "2026-05-30T06:30:29.338044+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -125,7 +125,7 @@
         "has_goal": true
       },
       "stale": true,
-      "stale_reason": "HTTPError: 429 on /users"
+      "stale_reason": "HTTPError: 429 on /calls"
     }
   ]
 }
