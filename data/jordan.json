@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T09:30:18.270194+00:00",
+  "generated_at": "2026-06-01T10:00:18.344344+00:00",
   "key": "jordan",
   "name": "Jordan for Hawaii",
   "candidate": "Jordan Nakamura",
@@ -11,20 +11,20 @@
   "doors": {
     "count_total": 3263,
     "count_week": 0,
-    "count_month": 3934,
+    "count_month": 0,
     "goal_total": 7978,
     "goal_weekly": 442,
     "goal_monthly": 1896,
     "pct_total": 40.9,
     "pct_week": 0.0,
-    "pct_month": 207.5,
+    "pct_month": 0.0,
     "week_window": [
-      "2026-05-25",
-      "2026-05-31"
+      "2026-06-01",
+      "2026-06-07"
     ],
     "month_window": [
-      "2026-05-01",
-      "2026-05-31"
+      "2026-06-01",
+      "2026-06-30"
     ],
     "daily_series": [
       {
@@ -70,31 +70,35 @@
       {
         "date": "2026-05-31",
         "count": 0
+      },
+      {
+        "date": "2026-06-01",
+        "count": 0
       }
     ],
     "baseline": 3934,
     "baseline_in_week": false,
-    "baseline_in_month": true,
+    "baseline_in_month": false,
     "baseline_end_date": "2026-05-20",
     "has_goal": true
   },
   "phones": {
     "count_total": 646,
-    "count_week": 178,
-    "count_month": 646,
+    "count_week": 0,
+    "count_month": 0,
     "goal_total": 8193,
     "goal_weekly": 896,
     "goal_monthly": 3840,
     "pct_total": 7.9,
-    "pct_week": 19.9,
-    "pct_month": 16.8,
+    "pct_week": 0.0,
+    "pct_month": 0.0,
     "week_window": [
-      "2026-05-25",
-      "2026-05-31"
+      "2026-06-01",
+      "2026-06-07"
     ],
     "month_window": [
-      "2026-05-01",
-      "2026-05-31"
+      "2026-06-01",
+      "2026-06-30"
     ],
     "daily_series": [
       {
@@ -151,6 +155,10 @@
       },
       {
         "date": "2026-05-31",
+        "count": 0
+      },
+      {
+        "date": "2026-06-01",
         "count": 0
       }
     ],
