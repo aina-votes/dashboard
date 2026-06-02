@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-02T04:30:29.746077+00:00",
+  "generated_at": "2026-06-02T05:00:49.409015+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -92,7 +92,9 @@
         "pct_week": 0.0,
         "pct_month": 0.0,
         "has_goal": true
-      }
+      },
+      "stale": true,
+      "stale_reason": "HTTPError: 429 on /users"
     },
     {
       "key": "paele",
@@ -123,9 +125,7 @@
         "pct_week": 0.0,
         "pct_month": 0.0,
         "has_goal": true
-      },
-      "stale": true,
-      "stale_reason": "HTTPError: 429 on /calls"
+      }
     }
   ]
 }
