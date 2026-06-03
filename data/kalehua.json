@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-03T09:30:48.215367+00:00",
+  "generated_at": "2026-06-03T10:00:20.802056+00:00",
   "key": "kalehua",
   "name": "Kalehua for Hawaii",
   "candidate": "Kalehua Kaopua",
@@ -77,6 +77,10 @@
       },
       {
         "date": "2026-06-02",
+        "count": 0
+      },
+      {
+        "date": "2026-06-03",
         "count": 0
       }
     ],
