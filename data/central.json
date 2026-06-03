@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-03T07:31:08.446506+00:00",
+  "generated_at": "2026-06-03T08:00:50.832736+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -30,9 +30,7 @@
         "pct_week": 0.0,
         "pct_month": 0.0,
         "has_goal": true
-      },
-      "stale": true,
-      "stale_reason": "HTTPError: 429 on /calls"
+      }
     },
     {
       "key": "christy",
@@ -63,7 +61,9 @@
         "pct_week": 19.5,
         "pct_month": 4.6,
         "has_goal": true
-      }
+      },
+      "stale": true,
+      "stale_reason": "HTTPError: 429 on /users"
     },
     {
       "key": "kalehua",
