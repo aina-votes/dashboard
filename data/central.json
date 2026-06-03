@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-03T16:00:52.402355+00:00",
+  "generated_at": "2026-06-03T16:30:50.648427+00:00",
   "campaigns": [
     {
       "key": "jordan",
@@ -61,9 +61,7 @@
         "pct_week": 19.5,
         "pct_month": 4.6,
         "has_goal": true
-      },
-      "stale": true,
-      "stale_reason": "HTTPError: 429 on /users"
+      }
     },
     {
       "key": "kalehua",
