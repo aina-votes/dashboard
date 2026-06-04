@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-04T09:30:33.519394+00:00",
+  "generated_at": "2026-06-04T10:30:33.322680+00:00",
   "key": "jordan",
   "name": "Jordan for Hawaii",
   "candidate": "Jordan Nakamura",
@@ -81,6 +81,10 @@
       },
       {
         "date": "2026-06-03",
+        "count": 0
+      },
+      {
+        "date": "2026-06-04",
         "count": 0
       }
     ],
@@ -176,6 +180,10 @@
       {
         "date": "2026-06-03",
         "count": 520
+      },
+      {
+        "date": "2026-06-04",
+        "count": 0
       }
     ],
     "has_goal": true
