@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-04T04:30:22.817714+00:00",
+  "generated_at": "2026-06-04T05:30:47.762658+00:00",
   "key": "jordan",
   "name": "Jordan for Hawaii",
   "candidate": "Jordan Nakamura",
@@ -91,15 +91,15 @@
     "has_goal": true
   },
   "phones": {
-    "count_total": 681,
-    "count_week": 35,
-    "count_month": 35,
+    "count_total": 1157,
+    "count_week": 511,
+    "count_month": 511,
     "goal_total": 8193,
     "goal_weekly": 896,
     "goal_monthly": 3840,
-    "pct_total": 8.3,
-    "pct_week": 3.9,
-    "pct_month": 0.9,
+    "pct_total": 14.1,
+    "pct_week": 57.0,
+    "pct_month": 13.3,
     "week_window": [
       "2026-06-01",
       "2026-06-07"
@@ -175,7 +175,7 @@
       },
       {
         "date": "2026-06-03",
-        "count": 35
+        "count": 511
       }
     ],
     "has_goal": true
