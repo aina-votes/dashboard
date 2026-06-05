@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-05T05:30:35.912621+00:00",
+  "generated_at": "2026-06-05T06:00:54.604313+00:00",
   "key": "christy",
   "name": "Christy for Hawaii",
   "candidate": "Christy Macpherson",
@@ -95,7 +95,7 @@
     "has_goal": true
   },
   "phones": {
-    "count_total": 1067,
+    "count_total": 1066,
     "count_week": 178,
     "count_month": 178,
     "goal_total": 8193,
@@ -147,7 +147,7 @@
       },
       {
         "date": "2026-05-26",
-        "count": 349
+        "count": 348
       },
       {
         "date": "2026-05-27",
