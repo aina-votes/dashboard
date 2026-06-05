@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-05T09:30:58.044815+00:00",
+  "generated_at": "2026-06-05T10:00:37.271476+00:00",
   "key": "christy",
   "name": "Christy for Hawaii",
   "candidate": "Christy Macpherson",
@@ -86,6 +86,10 @@
       {
         "date": "2026-06-04",
         "count": 1
+      },
+      {
+        "date": "2026-06-05",
+        "count": 0
       }
     ],
     "baseline": 2113,
@@ -184,6 +188,10 @@
       {
         "date": "2026-06-04",
         "count": 1
+      },
+      {
+        "date": "2026-06-05",
+        "count": 0
       }
     ],
     "has_goal": true
